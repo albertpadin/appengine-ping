@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>App Engine Ping</title>
+  </head>
+  <body>
+    <main>
+      <h1>App Engine Ping!</h1>
+      <p>Measure the latency of App Engine regions from your location.</p>
+      <div id="results">
+        <table>
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th>Custom Domain</th>
+              <th>Appspot Domain</th>
+              <th>Appspot Region Domain</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>asia-east2 (Hong Kong)</td><td id="asia-east2-customUrl-latency"></td><td id="asia-east2-appspotUrl-latency"></td><td id="asia-east2-appspotRegionUrl-latency"></td></tr>
+            <tr><td>asia-northeast1 (Tokyo)</td><td id="asia-northeast1-customUrl-latency"></td><td id="asia-northeast1-appspotUrl-latency"></td><td id="asia-northeast1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>asia-northeast2 (Osaka)</td><td id="asia-northeast2-customUrl-latency"></td><td id="asia-northeast2-appspotUrl-latency"></td><td id="asia-northeast2-appspotRegionUrl-latency"></td></tr>
+            <tr><td>asia-northeast3 (Seoul)</td><td id="asia-northeast3-customUrl-latency"></td><td id="asia-northeast3-appspotUrl-latency"></td><td id="asia-northeast3-appspotRegionUrl-latency"></td></tr>
+            <tr><td>asia-south1 (Mumbai)</td><td id="asia-south1-customUrl-latency"></td><td id="asia-south1-appspotUrl-latency"></td><td id="asia-south1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>asia-southeast2 (Jakarta)</td><td id="asia-southeast2-customUrl-latency"></td><td id="asia-southeast2-appspotUrl-latency"></td><td id="asia-southeast2-appspotRegionUrl-latency"></td></tr>
+            <tr><td>australia-southeast1 (Sydney)</td><td id="australia-southeast1-customUrl-latency"></td><td id="australia-southeast1-appspotUrl-latency"></td><td id="australia-southeast1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>europe-west1 (Belgium)</td><td id="europe-west1-customUrl-latency"></td><td id="europe-west1-appspotUrl-latency"></td><td id="europe-west1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>europe-west2 (London)</td><td id="europe-west2-customUrl-latency"></td><td id="europe-west2-appspotUrl-latency"></td><td id="europe-west2-appspotRegionUrl-latency"></td></tr>
+            <tr><td>europe-west3 (Frankfurt)</td><td id="europe-west3-customUrl-latency"></td><td id="europe-west3-appspotUrl-latency"></td><td id="europe-west3-appspotRegionUrl-latency"></td></tr>
+            <tr><td>europe-west6 (Zurich)</td><td id="europe-west6-customUrl-latency"></td><td id="europe-west6-appspotUrl-latency"></td><td id="europe-west6-appspotRegionUrl-latency"></td></tr>
+            <tr><td>northamerica-northeast1 (Montreal)</td><td id="northamerica-northeast1-customUrl-latency"></td><td id="northamerica-northeast1-appspotUrl-latency"></td><td id="northamerica-northeast1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>southamerica-east1 (Sao Paulo)</td><td id="southamerica-east1-customUrl-latency"></td><td id="southamerica-east1-appspotUrl-latency"></td><td id="southamerica-east1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-central1 (Iowa)</td><td id="us-central1-customUrl-latency"></td><td id="us-central1-appspotUrl-latency"></td><td id="us-central1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-east1 (South Carolina)</td><td id="us-east1-customUrl-latency"></td><td id="us-east1-appspotUrl-latency"></td><td id="us-east1-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-east4 (North Virginia)</td><td id="us-east4-customUrl-latency"></td><td id="us-east4-appspotUrl-latency"></td><td id="us-east4-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-west2 (Los Angeles)</td><td id="us-west2-customUrl-latency"></td><td id="us-west2-appspotUrl-latency"></td><td id="us-west2-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-west3 (Salt Lake City)</td><td id="us-west3-customUrl-latency"></td><td id="us-west3-appspotUrl-latency"></td><td id="us-west3-appspotRegionUrl-latency"></td></tr>
+            <tr><td>us-west4 (Las Vegas)</td><td id="us-west4-customUrl-latency"></td><td id="us-west4-appspotUrl-latency"></td><td id="us-west4-appspotRegionUrl-latency"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer style="margin-top: 50px;">Built by Albert of Symph.co. Inspired by GCPing.com</footer>
+
+    <script type="text/javascript">
+      const MAX_ROUNDS = 4;
+      const REGIONS = [
+        { id: 'asia-east2', name: 'Hong Kong', customUrl: 'https://asia-east2.symph.co', appspotUrl: 'https://symph-asia-east2.appspot.com', appspotRegionUrl: 'https://symph-asia-east2.df.r.appspot.com' },
+        { id: 'asia-northeast1', name: 'Tokyo', customUrl: 'https://asia-northeast1.symph.co', appspotUrl: 'https://symph-asia-northeast1.appspot.com', appspotRegionUrl: 'https://symph-asia-northeast1.an.r.appspot.com' },
+        { id: 'asia-northeast2', name: 'Osaka', customUrl: 'https://asia-northeast2.symph.co', appspotUrl: 'https://symph-asia-northeast2.appspot.com', appspotRegionUrl: 'https://symph-asia-northeast2.dt.r.appspot.com' },
+        { id: 'asia-northeast3', name: 'Seoul', customUrl: 'https://asia-northeast3.symph.co', appspotUrl: 'https://symph-asia-northeast3.appspot.com', appspotRegionUrl: 'https://symph-asia-northeast3.du.r.appspot.com' },
+        { id: 'asia-south1', name: 'Mumbai', customUrl: 'https://asia-south1.symph.co', appspotUrl: 'https://symph-asia-south1.appspot.com', appspotRegionUrl: 'https://symph-asia-south1.el.r.appspot.com' },
+        { id: 'asia-southeast2', name: 'Jakarta', customUrl: 'https://asia-southeast2.symph.co', appspotUrl: 'https://symph-asia-southeast2.appspot.com', appspotRegionUrl: 'https://symph-asia-southeast2.et.r.appspot.com' },
+        { id: 'australia-southeast1', name: 'Sydney', customUrl: 'https://australia-southeast1.symph.co', appspotUrl: 'https://symph-australia-southeast1.appspot.com', appspotRegionUrl: 'https://symph-australia-southeast1.ts.r.appspot.com' },
+        { id: 'europe-west1', name: 'Belgium', customUrl: 'https://europe-west1.symph.co', appspotUrl: 'https://symph-europe-west1.appspot.com', appspotRegionUrl: 'https://symph-europe-west1.ew.r.appspot.com' },
+        { id: 'europe-west2', name: 'London', customUrl: 'https://europe-west2.symph.co', appspotUrl: 'https://symph-europe-west2.appspot.com', appspotRegionUrl: 'https://symph-europe-west2.nw.r.appspot.com' },
+        { id: 'europe-west3', name: 'Frankfurt', customUrl: 'https://europe-west3.symph.co', appspotUrl: 'https://symph-europe-west3.appspot.com', appspotRegionUrl: 'https://symph-europe-west3.ey.r.appspot.com' },
+        { id: 'europe-west6', name: 'Zurich', customUrl: 'https://europe-west6.symph.co', appspotUrl: 'https://symph-europe-west6.appspot.com', appspotRegionUrl: 'https://symph-europe-west6.oa.r.appspot.com' },
+        { id: 'northamerica-northeast1', name: 'Montreal', customUrl: 'https://northamerica-northeast1.symph.co', appspotUrl: 'https://symph-northamerica-northeast1.appspot.com', appspotRegionUrl: 'https://symph-northamerica-northeast1.nn.r.appspot.com' },
+        { id: 'southamerica-east1', name: 'Sao Paulo', customUrl: 'https://southamerica-east1.symph.co', appspotUrl: 'https://symph-southamerica-east1.appspot.com', appspotRegionUrl: 'https://symph-southamerica-east1.rj.r.appspot.com' },
+        { id: 'us-central1', name: 'Iowa', customUrl: 'https://us-central1.symph.co', appspotUrl: 'https://symph-us-central1.appspot.com', appspotRegionUrl: 'https://symph-us-central1.uc.r.appspot.com' },
+        { id: 'us-east1', name: 'South Carolina', customUrl: 'https://us-east1.symph.co', appspotUrl: 'https://symph-us-east1.appspot.com', appspotRegionUrl: 'https://symph-us-east1.ue.r.appspot.com' },
+        { id: 'us-east4', name: 'North Virginia', customUrl: 'https://us-east4.symph.co', appspotUrl: 'https://symph-us-east4.appspot.com', appspotRegionUrl: 'https://symph-us-east4.uk.r.appspot.com' },
+        { id: 'us-west2', name: 'Los Angeles', customUrl: 'https://us-west2.symph.co', appspotUrl: 'https://symph-us-west2.appspot.com', appspotRegionUrl: 'https://symph-us-west2.wl.r.appspot.com' },
+        { id: 'us-west3', name: 'Salt Lake City', customUrl: 'https://us-west3.symph.co', appspotUrl: 'https://symph-us-west3.appspot.com', appspotRegionUrl: 'https://symph-us-west3.wm.r.appspot.com' },
+        { id: 'us-west4', name: 'Las Vegas', customUrl: 'https://us-west4.symph.co', appspotUrl: 'https://symph-us-west4.appspot.com', appspotRegionUrl: 'https://symph-us-west4.wn.r.appspot.com' },
+      ];
+
+      const URLTYPES = ['customUrl', 'appspotUrl', 'appspotRegionUrl'];
+      const COLORS = {
+        green: '#b9ca4a',
+        yellow: '#e7c547',
+        red: '#d54e53',
+      }
+      const THRESHOLDS = [200, 500];
+
+      // Given region object, contact ping endpoint and return latency.
+      let regionIndex = 0;
+      let urlTypeIndex = 0;
+      let count = 0;
+
+      const ping = async () => {
+        const region = REGIONS[regionIndex];
+        const urlType = URLTYPES[urlTypeIndex];
+
+        let latency = 0;
+        const customUrlStartTime = performance.now();
+        try {
+          await fetch(region[urlType] + '/ping');
+          const customUrlEndTime = performance.now();
+          latency = Math.ceil(customUrlEndTime - customUrlStartTime);
+        } catch (e) {
+          console.error(e);
+          latency = 'Error ';
+        }
+
+        // Write
+        const id = `${region.id}-${urlType}-latency`;
+        document.getElementById(id).textContent = `${latency}`;
+        document.getElementById(id).title = region[urlType];
+
+        if (latency <= THRESHOLDS[0]) {
+          document.getElementById(id).style.backgroundColor = COLORS.green;
+        } else if (latency <= THRESHOLDS[1]) {
+          document.getElementById(id).style.backgroundColor = COLORS.yellow;
+        } else {
+          document.getElementById(id).style.backgroundColor = COLORS.red;
+        }
+
+        regionIndex += 1;
+        if (regionIndex < REGIONS.length && urlTypeIndex < URLTYPES.length) {
+          document.dispatchEvent(new Event('nextping'));
+        } else if (urlTypeIndex < URLTYPES.length) {
+          regionIndex = 0;
+          urlTypeIndex += 1;
+
+          if (urlTypeIndex == URLTYPES.length && count < MAX_ROUNDS) {
+            // restart (up to 4 rounds)
+            regionIndex = 0;
+            urlTypeIndex = 0;
+            count += 1;
+            document.dispatchEvent(new Event('nextping'));
+          } if (urlTypeIndex < URLTYPES.length) {
+            document.dispatchEvent(new Event('nextping'));
+          }
+        }
+      };
+
+      document.addEventListener('nextping', ping);
+      document.dispatchEvent(new Event('nextping'));
+
+    </script>
+  </body>
+</html>

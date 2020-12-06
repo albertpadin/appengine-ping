@@ -1,0 +1,17 @@
+{
+  "name": "appengine-ping",
+  "description": "Measure latency of different App Engine regions around the world from your location.",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "author": "Albert Padin",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
