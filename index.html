@@ -89,6 +89,38 @@
       let urlTypeIndex = 0;
       let count = 0;
 
+      const updateLatencyTable = (region, urlType, latency) => {
+        const id = `${region.id}-${urlType}-latency`;
+
+        // Get the current value so we can compare. Only show minimum values.
+        const currentLatency = document.getElementById(id).textContent;
+
+        let shouldReplace = false;
+        if (currentLatency === '' || currentLatency === 'Error') {
+          shouldReplace = true;
+        } else if (latency !== 'Error' && latency < parseInt(currentLatency)) {
+          shouldReplace = true;
+        }
+
+        if (shouldReplace) {
+          document.getElementById(id).textContent = `${latency}`;
+
+          if (latency === 'Error') {
+            document.getElementById(id).style.backgroundColor = COLORS.red;
+          } else {
+            if (latency <= THRESHOLDS[0]) {
+              document.getElementById(id).style.backgroundColor = COLORS.green;
+            } else if (latency <= THRESHOLDS[1]) {
+              document.getElementById(id).style.backgroundColor = COLORS.yellow;
+            } else {
+              document.getElementById(id).style.backgroundColor = COLORS.red;
+            }
+          }
+        }
+
+        document.getElementById(id).title = region[urlType];
+      };
+
       const ping = async () => {
         const region = REGIONS[regionIndex];
         const urlType = URLTYPES[urlTypeIndex];
@@ -101,21 +133,11 @@
           latency = Math.ceil(customUrlEndTime - customUrlStartTime);
         } catch (e) {
           console.error(e);
-          latency = 'Error ';
+          latency = 'Error';
         }
 
         // Write
-        const id = `${region.id}-${urlType}-latency`;
-        document.getElementById(id).textContent = `${latency}`;
-        document.getElementById(id).title = region[urlType];
-
-        if (latency <= THRESHOLDS[0]) {
-          document.getElementById(id).style.backgroundColor = COLORS.green;
-        } else if (latency <= THRESHOLDS[1]) {
-          document.getElementById(id).style.backgroundColor = COLORS.yellow;
-        } else {
-          document.getElementById(id).style.backgroundColor = COLORS.red;
-        }
+        updateLatencyTable(region, urlType, latency);
 
         regionIndex += 1;
         if (regionIndex < REGIONS.length && urlTypeIndex < URLTYPES.length) {
