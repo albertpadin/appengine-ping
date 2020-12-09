@@ -14,8 +14,12 @@
   </head>
   <body>
     <main>
-      <h1>App Engine Ping!</h1>
-      <p>Measure the minimum latency of App Engine regions from your location.<br />This works by making a request to an App Engine app located in each region and showing the minimum latency out of 4 requests.</p>
+      <h1>Google App Engine Ping!</h1>
+      <p>Measure the minimum latency of Google App Engine regions from your location.<br />This works by making a request to an App Engine app located in each region and showing the minimum latency out of 4 rounds of requests.</p>
+
+      <br />
+      <p>Round <span id="round">0</span> of 4 Completed.<br />Depending on your internet speed, this can take around 3 minutes to complete.</p>
+
       <div id="results">
         <table>
           <thead>
@@ -50,7 +54,7 @@
         </table>
       </div>
     </main>
-    <footer style="margin-top: 50px;">Built by Albert of Symph.co. Inspired by GCPing.com. This is not an official Google product.</footer>
+    <footer style="margin-top: 50px;">Built by <a href="https://www.linkedin.com/in/albertpadin/">Albert</a> of <a href="https://symph.co">Symph.co</a>. Inspired by <a href="https://gcping.com/">GCPing.com</a>. This is not an official Google product. <a href="https://github.com/albertpadin/appengine-ping">Github</a></footer>
 
     <script type="text/javascript">
       const MAX_ROUNDS = 4;
@@ -87,7 +91,7 @@
       // Given region object, contact ping endpoint and return latency.
       let regionIndex = 0;
       let urlTypeIndex = 0;
-      let count = 0;
+      let currentRound = 0;
 
       const updateLatencyTable = (region, urlType, latency) => {
         const id = `${region.id}-${urlType}-latency`;
@@ -146,14 +150,20 @@
           regionIndex = 0;
           urlTypeIndex += 1;
 
-          if (urlTypeIndex == URLTYPES.length && count < MAX_ROUNDS) {
+          if (urlTypeIndex == URLTYPES.length && currentRound < MAX_ROUNDS) {
             // restart (up to 4 rounds)
             regionIndex = 0;
             urlTypeIndex = 0;
-            count += 1;
+            currentRound += 1;
+            document.getElementById('round').textContent = `${currentRound}`;
+
+            if (currentRound !== MAX_ROUNDS) {
+              document.dispatchEvent(new Event('nextping'));
+            }
+          } else if (urlTypeIndex < URLTYPES.length) {
             document.dispatchEvent(new Event('nextping'));
-          } if (urlTypeIndex < URLTYPES.length) {
-            document.dispatchEvent(new Event('nextping'));
+          } else {
+            document.getElementById('round').textContent = `${currentRound}`;
           }
         }
       };
