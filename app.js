@@ -5,6 +5,7 @@ const app = express();
 app.get('/ping', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Cache-Control', 'no-store');
   res
     .status(200)
     .send('pong')
